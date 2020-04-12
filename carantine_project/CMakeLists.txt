@@ -5,4 +5,4 @@ project(carantine_project LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(carantine_project main.cpp)
+add_executable(carantine_project main.cpp ultrasonicsensor.cpp sensorwrapper.cpp)
