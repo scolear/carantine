@@ -15,6 +15,7 @@ TriSonarHandler::~TriSonarHandler()
 
 void TriSonarHandler::setupPins()
 {
+    // todo: refactor: move these to the individual sonars.
     pinMode(TRIGGER0, OUTPUT);
     pinMode(ECHO0, INPUT);
 

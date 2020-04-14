@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+
 #include <wiringPi.h>
 #include <opencv2/highgui.hpp>
 
@@ -22,42 +24,79 @@ int main()
 
     while (run)
     {
-        switch (mode) {
+        int c = cv::waitKey(25);
+
+        switch (c) {
+            case 'q':
+                run = false;
+                std::cout << std::endl << "Exiting" << std::endl;
+                break;
+            case 'd':
+                displayDistances = !displayDistances;
+                break;
+            case 9:                                             // TAB
+                if (mode == Mode::MANUAL) {
+                    mode = Mode::AUTO;
+                    std::cout << std::endl << "Auto mode" << std::endl;
+                } else if (mode == Mode::AUTO) {
+                    mode = Mode::MANUAL;
+                    std::cout << std::endl << "Manual mode" << std::endl;
+                }
+                break;
+        }
+
+        switch (mode)
+        {
             case Mode::MANUAL:
             {
-                std::cout << "Manual mode" << std::endl;
+                // todo:
+                switch (c) {
+                    case 32 :                                   // SPACE
+                        // motor.allStop();
+                        std::cout << std::endl << "Stop" << std::endl;
+                        break;
+                    case 82 :                                   // UP
+                        // motor.speedUp();
+                        std::cout << std::endl << "Up" << std::endl;
+                        break;
+                    case 84 :                                   // DOWN
+                        // motor.speedDown();
+                        std::cout << std::endl << "Down" << std::endl;
+                        break;
+                    case 81 :                                   // LEFT
+                        // motor.leftTurn();
+                        std::cout << std::endl << "Left" << std::endl;
+                        break;
+                    case 83 :                                   // RIGHT
+                        // motor.rightTurn();
+                        std::cout << std::endl << "Right" << std::endl;
+                        break;
+                }
+
                 break;
             }
             case Mode::AUTO:
             {
-                std::cout << "Auto mode" << std::endl;
+                // Self-driving mode
                 break;
             }
         }
 
+        // todo: refactor this out of here
         if (displayDistances)
         {
+            std::cout << " \r ";
             for (auto distance : sensors.readDistances())
             {
-                std::cout << distance << " ";
+                std::cout << std::setprecision(4) << std::showpoint << distance << " \t ";
             }
-            std::cout << std::endl;
+            std::cout << std::flush;
         }
 
-        delay(100);
+        //delay(100);
 
-        int c = cv::waitKey(25);
-        
-        if (c == 'q') {
-            run = false;
-        } else if (c == 'm') {
-            mode = Mode::MANUAL;
-        } else if (c == 'a') {
-            mode = Mode::AUTO;
-        } else if (c == 'd') {
-            displayDistances = !displayDistances;
-        }
     }
 
+    std::cout << std::endl;
     return 0;
 }

@@ -22,5 +22,5 @@ double UltrasonicSensor::measureDistance()
 
     std::chrono::duration<double> elapsedTime = returnTime - startTime;
 
-    return (elapsedTime.count() * 34300) / 2;
+    return (elapsedTime.count() * 34300.0) / 2.0;
 }
