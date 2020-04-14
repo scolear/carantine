@@ -9,7 +9,7 @@ project(carantine_project)
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-add_executable(${PROJECT_NAME} "main.cpp" "movement/ultrasonicsensor.cpp" "movement/trisonarhandler.cpp")
+add_executable(${PROJECT_NAME} "main.cpp" "movement/ultrasonicsensor.cpp" "movement/ultrasonicsensor.h" "movement/trisonarhandler.cpp" "movement/trisonarhandler.h")
 
 find_library(wiringPi_LIB wiringPi)
 target_link_libraries(${PROJECT_NAME} ${wiringPi_LIB})
