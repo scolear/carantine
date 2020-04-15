@@ -6,8 +6,8 @@
 #include <opencv2/highgui.hpp>
 
 #include "main.h"
-#include "movement/trisonarhandler.h"
-#include "movement/Motors/motor.h"
+#include "movement/sensors/trisonarhandler.h"
+#include "movement/motors/motor.h"
 
 int main()
 {
@@ -41,9 +41,11 @@ int main()
             case 9:                                             // TAB
                 if (mode == Mode::MANUAL) {
                     mode = Mode::AUTO;
+                    //motor.allStop();
                     std::cout << std::endl << "Auto mode" << std::endl;
                 } else if (mode == Mode::AUTO) {
                     mode = Mode::MANUAL;
+                    //motor.allStop();
                     std::cout << std::endl << "Manual mode" << std::endl;
                 }
                 break;
@@ -53,7 +55,6 @@ int main()
         {
             case Mode::MANUAL:
             {
-                // todo:
                 switch (c) {
                     case 32 :                                   // SPACE
                         // motor.allStop();

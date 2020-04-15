@@ -5,10 +5,9 @@ Motor::Motor(int forwardPINNumber, int reversePINNumber) : _forwardPINNumber(for
 {
     initializePWM();
 
-    _direction = Direction::STOPPED;
+    _status = MotorState::STOPPED;
 
     _steps = {STEP_ZERO, STEP_ONE, STEP_TWO, STEP_THREE, STEP_FOUR, STEP_FIVE};
-    _maxStep = _steps[_steps.size()];
 }
 
 void Motor::initializePWM()
@@ -41,15 +40,15 @@ void Motor::setRPValue(unsigned int index)
 
 void Motor::stepUp()
 {
-    switch (_direction) {
-        case Direction::STOPPED :
+    switch (_status) {
+        case MotorState::STOPPED :
         {
             setFPValue(++_FPIndex);
-            _direction = Direction::FORWARD;
+            _status = MotorState::FORWARD;
             break;
 
         }
-        case Direction::FORWARD :
+        case MotorState::FORWARD :
         {
             if (_FPIndex == _steps.size() - 1) {
                 break;
@@ -58,14 +57,12 @@ void Motor::stepUp()
             }
             break;
         }
-        case Direction::REVERSE :
+        case MotorState::REVERSE :
         {
-            if (_RPIndex == 1) {
-                setRPValue(--_RPIndex);
-                _direction = Direction::STOPPED;
-            } else {
-                setRPValue(--_RPIndex);
-            }
+            setRPValue(--_RPIndex);
+
+            if (_RPIndex == 0)
+                _status = MotorState::STOPPED;
             break;
         }
     }
@@ -74,26 +71,26 @@ void Motor::stepUp()
 
 void Motor::stepDown()
 {
-    switch (_direction) {
-        case Direction::STOPPED :
+    switch (_status) {
+        case MotorState::STOPPED :
         {
             setRPValue(++_RPIndex);
-            _direction = Direction::REVERSE;
+            _status = MotorState::REVERSE;
             break;
 
         }
-        case Direction::FORWARD :
+        case MotorState::FORWARD :
         {
-            if (_FPIndex == 1) {
-                setFPValue(--_FPIndex);
-                _direction = Direction::STOPPED;
-            } else {
-                setFPValue(--_FPIndex);
-            }
+            setFPValue(--_FPIndex);
+
+            if (_FPIndex == 0)
+                _status = MotorState::STOPPED;
             break;
         }
-        case Direction::REVERSE :
+        case MotorState::REVERSE :
         {
+            // todo: refactor these
+
             if (_RPIndex == _steps.size() - 1) {
                 break;
             } else {
@@ -110,5 +107,29 @@ void Motor::stop()
     _RPIndex = 0;
     setFPValue(_FPIndex);
     setRPValue(_RPIndex);
-    _direction = Direction::STOPPED;
+    _status = MotorState::STOPPED;
+}
+
+MotorState Motor::getState()
+{
+    return _status;
+}
+
+unsigned int Motor::getAbsSpeed()
+{
+    switch (_status) {
+        case MotorState::STOPPED :
+        {
+            return 0;
+        }
+        case MotorState::FORWARD :
+        {
+            return _FPIndex;
+        }
+        case MotorState::REVERSE :
+        {
+            return _RPIndex;
+        }
+    }
+    return 0;
 }
