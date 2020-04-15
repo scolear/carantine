@@ -7,20 +7,18 @@
 
 #include "main.h"
 #include "movement/sensors/trisonarhandler.h"
-#include "movement/motors/motor.h"
+#include "movement/motors/motordriver.h"
 
 int main()
 {
+    cv::namedWindow("Carantine");
+    cv::imshow("Carantine", cv::Mat(100, 100, CV_8UC3, cv::Scalar(0, 0, 0)));
 
     wiringPiSetupGpio();
 
-    Motor testMotor(19, 13);
-    int speed = 0;
+    MotorDriver motorDriver(19, 13, 18, 12);
 
     TriSonarHandler sensors;
-
-    cv::namedWindow("Carantine");
-    cv::imshow("Carantine", cv::Mat(100, 100, CV_8UC3, cv::Scalar(0, 0, 0)));
 
     bool run = true;
     Mode mode = Mode::MANUAL;
@@ -38,14 +36,20 @@ int main()
             case 'd':
                 displayDistances = !displayDistances;
                 break;
-            case 9:                                             // TAB
-                if (mode == Mode::MANUAL) {
+            case 9 :                                             // TAB
+                if (mode == Mode::MANUAL)
+                {
                     mode = Mode::AUTO;
-                    //motor.allStop();
+                    motorDriver.allStop();
+
                     std::cout << std::endl << "Auto mode" << std::endl;
-                } else if (mode == Mode::AUTO) {
+
+                }
+                else if (mode == Mode::AUTO)
+                {
                     mode = Mode::MANUAL;
-                    //motor.allStop();
+                    motorDriver.allStop();
+
                     std::cout << std::endl << "Manual mode" << std::endl;
                 }
                 break;
@@ -55,33 +59,40 @@ int main()
         {
             case Mode::MANUAL:
             {
-                switch (c) {
+                switch (c)
+                {
                     case 32 :                                   // SPACE
-                        // motor.allStop();
-                        testMotor.stop();
-                        speed = 0;
+
+                        motorDriver.allStop();
+
                         std::cout << std::endl << "Stop" << std::endl;
                         break;
+
                     case 82 :                                   // UP
-                        // motor.speedUp();
-                        speed += 20;
-                        testMotor.stepUp();
 
-                        std::cout << std::endl << "Up " << speed << std::endl;
+                        motorDriver.up();
+
+                        std::cout << std::endl << "Up " << std::endl;
                         break;
+
                     case 84 :                                   // DOWN
-                        // motor.speedDown();
-                        speed -= 20;
-                        testMotor.stepDown();
 
-                        std::cout << std::endl << "Down " << speed << std::endl;
+                        motorDriver.down();
+
+                        std::cout << std::endl << "Down " << std::endl;
                         break;
+
                     case 81 :                                   // LEFT
-                        // motor.leftTurn();
+
+                        motorDriver.left();
+
                         std::cout << std::endl << "Left" << std::endl;
                         break;
+
                     case 83 :                                   // RIGHT
-                        // motor.rightTurn();
+
+                        motorDriver.right();
+
                         std::cout << std::endl << "Right" << std::endl;
                         break;
                 }
