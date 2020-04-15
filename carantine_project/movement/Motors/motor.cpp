@@ -3,10 +3,20 @@
 Motor::Motor(int forwardPINNumber, int reversePINNumber) : _forwardPINNumber(forwardPINNumber),
                                                            _reversePINNumber(reversePINNumber)
 {
+    initializePWM();
+
     _direction = Direction::STOPPED;
 
-    _steps = {0, 20, 40, 60, 80, 100};
+    _steps = {STEP_ZERO, STEP_ONE, STEP_TWO, STEP_THREE, STEP_FOUR, STEP_FIVE};
     _maxStep = _steps[_steps.size()];
+}
+
+void Motor::initializePWM()
+{
+    // possible streamlining: shut down the threads while motor is stopped
+
+    softPwmCreate(_forwardPINNumber, 0, 100);
+    softPwmCreate(_reversePINNumber, 0, 100);
 
     _FPIndex = 0;
     _RPIndex = 0;
@@ -18,16 +28,14 @@ Motor::Motor(int forwardPINNumber, int reversePINNumber) : _forwardPINNumber(for
 void Motor::setFPValue(unsigned int index)
 {
     if (index < _steps.size()) {
-        _forwardPINValue = _steps[index];
+        softPwmWrite(_forwardPINNumber, _steps[index]);
     }
-
-    //todo : we could use these functions to write the pwm value immediately.
 }
 
 void Motor::setRPValue(unsigned int index)
 {
     if (index < _steps.size()) {
-        _reversePINValue = _steps[index];
+        softPwmWrite(_reversePINNumber, _steps[index]);
     }
 }
 
@@ -64,9 +72,43 @@ void Motor::stepUp()
 
 }
 
+void Motor::stepDown()
+{
+    switch (_direction) {
+        case Direction::STOPPED :
+        {
+            setRPValue(++_RPIndex);
+            _direction = Direction::REVERSE;
+            break;
+
+        }
+        case Direction::FORWARD :
+        {
+            if (_FPIndex == 1) {
+                setFPValue(--_FPIndex);
+                _direction = Direction::STOPPED;
+            } else {
+                setFPValue(--_FPIndex);
+            }
+            break;
+        }
+        case Direction::REVERSE :
+        {
+            if (_RPIndex == _steps.size() - 1) {
+                break;
+            } else {
+                setRPValue(++_RPIndex);
+            }
+            break;
+        }
+    }
+}
+
 void Motor::stop()
 {
-    setFPValue(0);
-    setRPValue(0);
+    _FPIndex = 0;
+    _RPIndex = 0;
+    setFPValue(_FPIndex);
+    setRPValue(_RPIndex);
     _direction = Direction::STOPPED;
 }
