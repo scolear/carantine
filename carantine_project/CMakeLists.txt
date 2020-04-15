@@ -9,9 +9,14 @@ project(carantine_project)
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-add_executable(${PROJECT_NAME} "main.cpp" "movement/ultrasonicsensor.cpp" "movement/trisonarhandler.cpp")
+add_executable(${PROJECT_NAME} "main.cpp" "movement/ultrasonicsensor.cpp" "movement/trisonarhandler.cpp" "movement/Motors/motor.cpp")
 
 find_library(wiringPi_LIB wiringPi)
 target_link_libraries(${PROJECT_NAME} ${wiringPi_LIB})
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+target_link_libraries(${PROJECT_NAME} Threads::Threads)
 
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
