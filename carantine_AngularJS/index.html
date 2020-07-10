@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="CarantineApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carantine Controls</title>
+
+    <link href="css/styles.css" rel="stylesheet" type="text/css" />
+    <script src="app/lib/angular.min.js"></script>
+    <script src="app/app.js"></script>
+
+</head>
+<body>
+    <div ng-controller="CarantineController as $ctrl">
+        <div class="sensor-display">
+            <span class="sensor"> {{$ctrl.sensors[0].value}} </span>
+            <span class="sensor"> {{$ctrl.sensors[1].value}} </span>
+            <span class="sensor"> {{$ctrl.sensors[2].value}} </span>
+        </div>
+        <div class="state-display">
+            <span class="state"> {{$ctrl.state}} </span>
+        </div>
+
+
+    </div>
+</body>
+</html>
